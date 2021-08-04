@@ -1,0 +1,46 @@
+- become: yes
+  hosts: all
+  name: packages-install
+  tasks:
+    - name: Add the user ruan and add it to the sudo group
+      user:
+        name: ruan
+        group: sudo
+        shell: /bin/bash
+
+    - name: Add SSH key for ruan
+      authorized_key:
+        user: ruan
+        state: present
+        key: "{{ lookup('file', pub_key) }}"
+
+    - name: Update all packages
+      apt:
+        upgrade: dist
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install prometheus-node-exporter
+      apt:
+        name: prometheus-node-exporter
+        update_cache: yes
+        state: latest
+
+    - name: Install apache2
+      apt:
+        name: apache2
+        update_cache: yes
+        state: latest
+
+    - name: Enable mod_rewrite
+      apache2_module:
+        name: rewrite
+        state: present
+      notify:
+        - restart-apache2
+
+  handlers:
+    - name: restart-apache2
+      service:
+        name: apache2
+        state: restarted
