@@ -1,1 +1,7 @@
+version: '3'
 
+tasks:
+  check:
+    cmds:
+      - if [ $(command -v ansible > /dev/null; echo $?) = 0 ] ; then echo ansible is installed ; else echo ansible is not installed; fi
+      - if [ $(command -v terraform > /dev/null; echo $?) = 0 ] ; then echo terraform is installed ; else echo terraform is not installed; fi
