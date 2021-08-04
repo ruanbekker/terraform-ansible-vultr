@@ -1,6 +1,12 @@
 # terraform-ansible-vultr
 Using Terraform and Ansible for Vultr Instances
 
+## Requirements
+
+- VULTR API Key (and set to the env: `export TF_VAR_vultr_api_key=""`
+- Terraform
+- Ansible
+
 ## Resources
 
 ### Ansible Resources
