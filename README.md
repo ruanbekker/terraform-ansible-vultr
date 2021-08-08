@@ -19,6 +19,7 @@ Inventory:
 Project Structure:
 
 - https://github.com/enginyoyen/ansible-best-practises
+- https://github.com/ansiblejunky/ansible-examples-repos-playbooks
 
 ### Terraform Resources
 
