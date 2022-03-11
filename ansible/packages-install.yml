@@ -1,0 +1,57 @@
+- name: packages-install
+  become: true
+  become_user: root
+  hosts: all
+  tasks:
+    - name: Add the user {{ os_user }} and add it to the sudo group
+      user:
+        name: "{{ os_user }}"
+        group: sudo
+        shell: /bin/bash
+
+    - name: Add SSH key for {{ os_user }}
+      authorized_key:
+        user: "{{ os_user }}"
+        state: present
+        key: "{{ lookup('file', pub_key) }}"
+
+    - name: Allow {{ os_user }} to have passwordless sudo access
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%sudo'
+        line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+        validate: visudo -cf %s
+
+    - name: Update all packages
+      apt:
+        upgrade: dist
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install prometheus-node-exporter
+      apt:
+        name: prometheus-node-exporter
+        update_cache: yes
+        state: latest
+
+    - name: Install apache2
+      apt:
+        name: 
+          - apache2
+          - apache2-utils
+        update_cache: yes
+        state: latest
+
+    - name: Enable mod_rewrite
+      apache2_module:
+        name: rewrite
+        state: present
+      notify:
+        - restart-apache2
+
+  handlers:
+    - name: restart-apache2
+      service:
+        name: apache2
+        state: restarted
