@@ -1,18 +1,27 @@
-- become: yes
+- name: packages-install
+  become: true
+  become_user: root
   hosts: all
-  name: packages-install
   tasks:
-    - name: Add the user ruan and add it to the sudo group
+    - name: Add the user {{ os_user }} and add it to the sudo group
       user:
-        name: ruan
+        name: "{{ os_user }}"
         group: sudo
         shell: /bin/bash
 
-    - name: Add SSH key for ruan
+    - name: Add SSH key for {{ os_user }}
       authorized_key:
-        user: ruan
+        user: "{{ os_user }}"
         state: present
         key: "{{ lookup('file', pub_key) }}"
+
+    - name: Allow {{ os_user }} to have passwordless sudo access
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%sudo'
+        line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+        validate: visudo -cf %s
 
     - name: Update all packages
       apt:
@@ -28,7 +37,9 @@
 
     - name: Install apache2
       apt:
-        name: apache2
+        name: 
+          - apache2
+          - apache2-utils
         update_cache: yes
         state: latest
 

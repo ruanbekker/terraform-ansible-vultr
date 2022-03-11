@@ -1,7 +1,18 @@
+# https://github.com/go-task/task/blob/master/docs/usage.md
 version: '3'
 
 tasks:
+  default:
+    desc: Shows this menu
+    cmds:
+      - task --list
   check:
+    desc: Checks if ansible and terraform is installed
+    silent: true
     cmds:
       - if [ $(command -v ansible > /dev/null; echo $?) = 0 ] ; then echo ansible is installed ; else echo ansible is not installed; fi
       - if [ $(command -v terraform > /dev/null; echo $?) = 0 ] ; then echo terraform is installed ; else echo terraform is not installed; fi
+  ansible-deploy:
+    desc: Deploys ansible playbook
+    cmds:
+      - ansible-playbook -e pub_key=~/.ssh/vultr.pub -e os_user=snake ansible/packages-install.yml
