@@ -1,6 +1,6 @@
 variable "ubuntu_20" {
   type    = string
-  default = "Ubuntu 20.04 x64"
+  default = "Ubuntu 20.04 LTS x64"
 }
 
 variable "debian_10" {
